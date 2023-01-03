@@ -1,0 +1,6 @@
+diskcache
+loguru
+minio
+pydantic
+requests
+typer
