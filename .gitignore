@@ -1,0 +1,7 @@
+# playground
+playground/
+
+# local environment
+.venv
+__pycache__/
+minio/
