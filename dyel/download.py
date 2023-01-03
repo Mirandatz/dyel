@@ -3,34 +3,34 @@ import io
 import pydantic
 import typer
 from loguru import logger
-from minio import Minio
 
 import dyel.riot_api as riot_api
+from minio import Minio  # type: ignore
 
 
 class RiotSettings(pydantic.BaseSettings):
     region_url: str = pydantic.Field(
         default="https://americas.api.riotgames.com",
-        env="DYEL_RIOT_REGION_URL",
+        env="RIOT_REGION_URL",
     )
     country_url: str = pydantic.Field(
         default="https://br1.api.riotgames.com",
-        env="DYEL_RIOT_COUNTRY_URL",
+        env="RIOT_COUNTRY_URL",
     )
-    api_key: str = pydantic.Field(env="DYEL_RIOT_API_KEY")
+    api_key: str = pydantic.Field(env="RIOT_API_KEY")
 
 
 class StorageSettings(pydantic.BaseSettings):
     endpoint: str = pydantic.Field(
         default="dyel-minio:9000",
-        env="DYEL_STORAGE_ENDPOINT",
+        env="MINIO_ENDPOINT",
     )
     bucket: str = pydantic.Field(
-        default="dev_bucket",
-        env="DYEL_STORAGE_BUCKET",
+        default="dev-bucket",
+        env="MINIO_BUCKET",
     )
-    user: str = pydantic.Field(env="DYEL_STORAGE_USER")
-    password: str = pydantic.Field(env="DYEL_STORAGE_PASSWORD")
+    user: str = pydantic.Field(env="MINIO_ROOT_USER")
+    password: str = pydantic.Field(env="MINIO_ROOT_PASSWORD")
 
 
 app = typer.Typer()
