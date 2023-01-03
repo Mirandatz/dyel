@@ -5,3 +5,6 @@ playground/
 .venv
 __pycache__/
 minio/
+
+# local environment secrets
+secrets/

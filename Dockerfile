@@ -1,3 +1,5 @@
+# syntax = docker/dockerfile:1.2
+
 FROM python:3.10.9-bullseye
 
 ENV TZ=America/Sao_Paulo
