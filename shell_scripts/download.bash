@@ -23,4 +23,4 @@ docker run \
     --network "$network_name" \
     --env-file secrets/secrets.env \
     --env-file <(env | grep DYEL_) \
-    mirandatz/dyel:runtime python -m dyel.download "$*"
+    mirandatz/dyel:runtime python -m dyel.download "$@"
