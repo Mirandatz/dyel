@@ -14,21 +14,45 @@ class Summoner(pydantic.BaseModel):
     revision_date: dt.datetime = pydantic.Field(alias="revisionDate")
     summoner_level: int = pydantic.Field(alias="summonerLevel")
 
+    class Config:
+        validiate_all = True
 
-def get_summoner_data(
-    summoner_name: str,
-    api_key: str,
-    country_url: str = "https://br1.api.riotgames.com",
-) -> Summoner:
-    logger.info(
-        f"downloading summoner data, name={summoner_name}, country_url={country_url}"
+
+class RiotClient(pydantic.BaseSettings):
+    api_key: str = pydantic.Field(..., env="RIOT_API_KEY")
+
+    country_url: str = pydantic.Field(
+        "https://br1.api.riotgames.com", env="RIOT_COUNTRY_URL"
     )
 
-    r = requests.get(
-        url=f"{country_url}/lol/summoner/v4/summoners/by-name/{summoner_name}",
-        headers={"X-Riot-Token": api_key},
+    region_url: str = pydantic.Field(
+        "https://americas.api.riotgames.com",
+        env="RIOT_REGION_URL",
     )
 
-    r.raise_for_status()
-    json = r.json()
-    return Summoner(**json)
+    # pydantic magic
+    class Config:
+        env_prefix = "DYEL_"
+        env_file = "secrets/secrets.env"
+
+    def download_summoner_data(self, summoner_name: str) -> Summoner:
+        logger.info(f"downloading summoner data, name={summoner_name}")
+
+        response = requests.get(
+            url=f"{self.country_url}/lol/summoner/v4/summoners/by-name/{summoner_name}",
+            headers={"X-Riot-Token": self.api_key},
+        )
+
+        response.raise_for_status()
+        json = response.json()
+        return Summoner(**json)
+
+
+def main() -> None:
+    riot = RiotClient()
+    summoner = riot.download_summoner_data("Mephy")
+    print(summoner)
+
+
+if __name__ == "__main__":
+    main()

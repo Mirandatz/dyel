@@ -2,6 +2,6 @@ attrs
 diskcache
 loguru
 minio
-pydantic
+pydantic[dotenv]
 requests
 typer
