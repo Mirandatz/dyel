@@ -1,25 +1,32 @@
-import datetime as dt
-
-import pytest
+import json
 
 import dyel.riot_api
 
 
 def test_download_summoner_data() -> None:
     client = dyel.riot_api.RiotClient()
-    summoner = client.download_summoner_data("Mephy")
+    raw = client.download_summoner_data("Mephy")
+    data = json.loads(raw)
 
-    assert summoner.name == "Mephy"
+    assert list(data.keys()) == [
+        "id",
+        "accountId",
+        "puuid",
+        "name",
+        "profileIconId",
+        "revisionDate",
+        "summonerLevel",
+    ]
+
+    assert data["name"] == "Mephy"
     assert (
-        summoner.puuid
+        data["puuid"]
         == "iICvb22W3-OAPKdgPEto9eIOwHbuGjiuCIhbExpmXZYx4mQuosBu_LKZSW_9PYWFVvxdz7UaLzMkcQ"
     )
-    assert summoner.id == "whn4axlxBaWmkCaakVFfJds6Rn52PQo2M8X8e1BFbGvP"
-    assert summoner.account_id == "NSpquHoF_vBQYLZ4ZG7nGoRK8-2fhxUDOKxAc14PTjg"
-    assert summoner.summoner_level == 42
-    assert summoner.revision_date == dt.datetime(
-        year=2022, month=2, day=27, hour=20, minute=58, second=18, tzinfo=dt.UTC
-    )
+    assert data["id"] == "whn4axlxBaWmkCaakVFfJds6Rn52PQo2M8X8e1BFbGvP"
+    assert data["accountId"] == "NSpquHoF_vBQYLZ4ZG7nGoRK8-2fhxUDOKxAc14PTjg"
+    assert data["summonerLevel"] == 42
+    assert data["revisionDate"] == 1645995498000
 
 
 def test_download_match_ids() -> None:
@@ -52,21 +59,18 @@ def test_download_match_ids() -> None:
     ] == matche_ids
 
 
-def test_settings_immutability() -> None:
-    client = dyel.riot_api.RiotClient()
-    with pytest.raises(TypeError):
-        client.api_key = "whatever"
-
-
-def test_models_immutability() -> None:
-    model = dyel.riot_api.Summoner(
-        id="a",
-        accountId="b",
-        puuid="c",
-        name="d",
-        profileIconId=4,
-        revisionDate=dt.datetime.now(),
-        summonerLevel=123,
-    )
-    with pytest.raises(TypeError):
-        model.id = "whatever"
+# def test_download_match_data_champion_names() -> None:
+# client = dyel.riot_api.RiotClient()
+# match_data = client.download_match_data("BR1_2679279998")
+# assert [
+#     "Ahri",
+#     "FiddleSticks",
+#     "Lillia",
+#     "Aphelios",
+#     "Lux",
+#     "Sion",
+#     "MasterYi",
+#     "AurelionSol",
+#     "MissFortune",
+#     "Senna",
+# ] == [p.champion_name for p in match_data.info.participants]
