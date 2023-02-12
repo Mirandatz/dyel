@@ -47,11 +47,31 @@ class RiotClient(pydantic.BaseSettings):
         json = response.json()
         return Summoner(**json)
 
+    def download_match_ids(
+        self,
+        summoner_puuid: str,
+        start_index: int = 0,
+        count: int = 20,
+    ) -> list[str]:
+        logger.info(f"downloading match ids, summoner_id={summoner_puuid}")
+
+        response = requests.get(
+            url=f"{self.region_url}/lol/match/v5/matches/by-puuid/{summoner_puuid}/ids",
+            headers={"X-Riot-Token": self.api_key},
+            params={"count": count},
+        )
+
+        response.raise_for_status()
+        match_ids = response.json()
+        assert isinstance(match_ids, list)
+        return match_ids
+
 
 def main() -> None:
     riot = RiotClient()
     summoner = riot.download_summoner_data("Mephy")
-    print(summoner)
+    matches = riot.download_match_ids(summoner.puuid)
+    print(matches)
 
 
 if __name__ == "__main__":
