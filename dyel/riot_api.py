@@ -3,6 +3,8 @@ import datetime as dt
 import pydantic
 import requests
 from loguru import logger
+from pydantic import Field
+from pydantic.utils import to_lower_camel
 
 
 class RiotResponseModel(pydantic.BaseModel):
@@ -10,26 +12,30 @@ class RiotResponseModel(pydantic.BaseModel):
         allow_mutation = False
         validate_assignment = True
         extra = pydantic.Extra.forbid
+        alias_generator = to_lower_camel
 
 
 class Summoner(RiotResponseModel):
     id: str
-    account_id: str = pydantic.Field(alias="accountId")
+    account_id: str
     puuid: str
     name: str
-    profile_icon: int = pydantic.Field(alias="profileIconId")
-    revision_date: dt.datetime = pydantic.Field(alias="revisionDate")
-    summoner_level: int = pydantic.Field(alias="summonerLevel")
+    profile_icon_id: int
+    revision_date: dt.datetime
+    summoner_level: int
+
+
+class MatchMetadata(RiotResponseModel):
+    data_version: str
+    match_id: str
 
 
 class RiotClient(pydantic.BaseSettings):
-    api_key: str = pydantic.Field(..., env="RIOT_API_KEY")
+    api_key: str = Field(..., env="RIOT_API_KEY")
 
-    country_url: str = pydantic.Field(
-        "https://br1.api.riotgames.com", env="RIOT_COUNTRY_URL"
-    )
+    country_url: str = Field("https://br1.api.riotgames.com", env="RIOT_COUNTRY_URL")
 
-    region_url: str = pydantic.Field(
+    region_url: str = Field(
         "https://americas.api.riotgames.com",
         env="RIOT_REGION_URL",
     )
