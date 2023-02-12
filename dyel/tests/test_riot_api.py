@@ -1,5 +1,7 @@
 import datetime as dt
 
+import pytest
+
 import dyel.riot_api
 
 
@@ -48,3 +50,23 @@ def test_download_match_ids() -> None:
         "BR1_2471031171",
         "BR1_2471027705",
     ] == matche_ids
+
+
+def test_settings_immutability() -> None:
+    client = dyel.riot_api.RiotClient()
+    with pytest.raises(TypeError):
+        client.api_key = "whatever"
+
+
+def test_models_immutability() -> None:
+    model = dyel.riot_api.Summoner(
+        id="a",
+        accountId="b",
+        puuid="c",
+        name="d",
+        profileIconId=4,
+        revisionDate=dt.datetime.now(),
+        summonerLevel=123,
+    )
+    with pytest.raises(TypeError):
+        model.id = "whatever"

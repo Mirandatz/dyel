@@ -5,7 +5,14 @@ import requests
 from loguru import logger
 
 
-class Summoner(pydantic.BaseModel):
+class RiotResponseModel(pydantic.BaseModel):
+    class Config:
+        allow_mutation = False
+        validate_assignment = True
+        extra = pydantic.Extra.forbid
+
+
+class Summoner(RiotResponseModel):
     id: str
     account_id: str = pydantic.Field(alias="accountId")
     puuid: str
@@ -13,9 +20,6 @@ class Summoner(pydantic.BaseModel):
     profile_icon: int = pydantic.Field(alias="profileIconId")
     revision_date: dt.datetime = pydantic.Field(alias="revisionDate")
     summoner_level: int = pydantic.Field(alias="summonerLevel")
-
-    class Config:
-        validiate_all = True
 
 
 class RiotClient(pydantic.BaseSettings):
@@ -32,6 +36,9 @@ class RiotClient(pydantic.BaseSettings):
 
     # pydantic magic
     class Config:
+        allow_mutation = False
+        validate_assignment = True
+        extra = pydantic.Extra.forbid
         env_prefix = "DYEL_"
         env_file = "secrets/secrets.env"
 
@@ -70,6 +77,7 @@ class RiotClient(pydantic.BaseSettings):
 def main() -> None:
     riot = RiotClient()
     summoner = riot.download_summoner_data("Mephy")
+    summoner.id = "aa"
     matches = riot.download_match_ids(summoner.puuid)
     print(matches)
 
