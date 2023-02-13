@@ -6,7 +6,7 @@ from loguru import logger
 from pydantic import Field
 
 
-class RiotAPISettings(pydantic.BaseSettings):
+class RiotApiSettings(pydantic.BaseSettings):
     """
     Periods for hit-limits are measured in seconds.
     """
@@ -45,7 +45,7 @@ class RiotAPISettings(pydantic.BaseSettings):
 
 
 class RiotClient:
-    def __init__(self, api_settings: RiotAPISettings) -> None:
+    def __init__(self, api_settings: RiotApiSettings) -> None:
         self._rate_limiter = rate_limit_lib.strategies.FixedWindowRateLimiter(
             rate_limit_lib.storage.MemoryStorage()
         )
