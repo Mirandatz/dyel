@@ -25,7 +25,8 @@ class MinIOSettings(pydantic.BaseSettings):
 
 
 class MinIOClient:
-    def __init__(self, settings: MinIOSettings) -> None:
+    def __init__(self, settings: MinIOSettings = MinIOSettings()) -> None:
+        settings = settings or MinIOSettings()
         self._minio = Minio(
             endpoint=settings.endpoint,
             access_key=settings.user,

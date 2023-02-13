@@ -45,7 +45,7 @@ class RiotApiSettings(pydantic.BaseSettings):
 
 
 class RiotClient:
-    def __init__(self, api_settings: RiotApiSettings) -> None:
+    def __init__(self, api_settings: RiotApiSettings = RiotApiSettings()) -> None:
         self._rate_limiter = rate_limit_lib.strategies.FixedWindowRateLimiter(
             rate_limit_lib.storage.MemoryStorage()
         )

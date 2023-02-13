@@ -4,7 +4,7 @@ import dyel.riot_api
 
 
 def test_download_summoner_data() -> None:
-    client = dyel.riot_api.RiotClient(dyel.riot_api.RiotApiSettings())
+    client = dyel.riot_api.RiotClient()
     raw = client.download_summoner_data("Mephy")
     data = json.loads(raw)
 
@@ -30,7 +30,7 @@ def test_download_summoner_data() -> None:
 
 
 def test_download_match_ids() -> None:
-    client = dyel.riot_api.RiotClient(dyel.riot_api.RiotApiSettings())
+    client = dyel.riot_api.RiotClient()
     matche_ids = client.download_match_ids(
         "iICvb22W3-OAPKdgPEto9eIOwHbuGjiuCIhbExpmXZYx4mQuosBu_LKZSW_9PYWFVvxdz7UaLzMkcQ"
     )
@@ -57,20 +57,3 @@ def test_download_match_ids() -> None:
         "BR1_2471031171",
         "BR1_2471027705",
     ] == matche_ids
-
-
-# def test_download_match_data_champion_names() -> None:
-# client = dyel.riot_api.RiotClient()
-# match_data = client.download_match_data("BR1_2679279998")
-# assert [
-#     "Ahri",
-#     "FiddleSticks",
-#     "Lillia",
-#     "Aphelios",
-#     "Lux",
-#     "Sion",
-#     "MasterYi",
-#     "AurelionSol",
-#     "MissFortune",
-#     "Senna",
-# ] == [p.champion_name for p in match_data.info.participants]
