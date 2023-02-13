@@ -7,7 +7,23 @@ from pydantic import Field
 
 
 class RiotAPISettings(pydantic.BaseSettings):
-    api_key: str = Field(..., env="RIOT_API_KEY")
+    """
+    Periods for hit-limits are measured in seconds.
+    """
+
+    key: str = Field(..., env="RIOT_API_KEY")
+
+    short_hit_limit_count: int = Field(20, env="RIOT_API_SHORT_HIT_LIMIT_COUNT")
+    short_hit_limit_period: int = Field(
+        1,
+        env="RIOT_API_SHORT_HIT_LIMIT_PERIOD",
+    )
+
+    long_hit_limit_count: int = Field(100, env="RIOT_API_LONG_HIT_LIMIT_COUNT")
+    long_hit_limit_period: int = Field(
+        120,
+        env="RIOT_API_LONG_HIT_LIMIT_PERIOD",
+    )
 
     country_url: str = Field(
         "https://br1.api.riotgames.com",
@@ -33,9 +49,16 @@ class RiotClient:
         self._rate_limiter = rate_limit_lib.strategies.FixedWindowRateLimiter(
             rate_limit_lib.storage.MemoryStorage()
         )
+
         self._rate_limits = (
-            rate_limit_lib.parse("20 per second"),
-            rate_limit_lib.parse("100 per 2 minute"),
+            rate_limit_lib.RateLimitItemPerSecond(
+                amount=api_settings.short_hit_limit_count,
+                multiples=api_settings.short_hit_limit_period,
+            ),
+            rate_limit_lib.RateLimitItemPerSecond(
+                amount=api_settings.long_hit_limit_count,
+                multiples=api_settings.long_hit_limit_period,
+            ),
         )
         self.api_settings = api_settings
 
@@ -52,7 +75,7 @@ class RiotClient:
 
         response = requests.get(
             url=f"{self.api_settings.country_url}/lol/summoner/v4/summoners/by-name/{summoner_name}",
-            headers={"X-Riot-Token": self.api_settings.api_key},
+            headers={"X-Riot-Token": self.api_settings.key},
         )
         response.raise_for_status()
 
@@ -70,7 +93,7 @@ class RiotClient:
 
         response = requests.get(
             url=f"{self.api_settings.region_url}/lol/match/v5/matches/by-puuid/{summoner_puuid}/ids",
-            headers={"X-Riot-Token": self.api_settings.api_key},
+            headers={"X-Riot-Token": self.api_settings.key},
             params={
                 "start_index": start_index,
                 "count": count,
@@ -89,7 +112,7 @@ class RiotClient:
 
         response = requests.get(
             url=f"{self.api_settings.region_url}/lol/match/v5/matches/{match_id}",
-            headers={"X-Riot-Token": self.api_settings.api_key},
+            headers={"X-Riot-Token": self.api_settings.key},
         )
         response.raise_for_status()
 

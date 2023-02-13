@@ -4,7 +4,7 @@ import dyel.riot_api
 
 
 def test_download_summoner_data() -> None:
-    client = dyel.riot_api.RiotAPISettings()
+    client = dyel.riot_api.RiotClient(dyel.riot_api.RiotAPISettings())
     raw = client.download_summoner_data("Mephy")
     data = json.loads(raw)
 
@@ -30,7 +30,7 @@ def test_download_summoner_data() -> None:
 
 
 def test_download_match_ids() -> None:
-    client = dyel.riot_api.RiotAPISettings()
+    client = dyel.riot_api.RiotClient(dyel.riot_api.RiotAPISettings())
     matche_ids = client.download_match_ids(
         "iICvb22W3-OAPKdgPEto9eIOwHbuGjiuCIhbExpmXZYx4mQuosBu_LKZSW_9PYWFVvxdz7UaLzMkcQ"
     )
