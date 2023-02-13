@@ -1,5 +1,7 @@
 attrs
+backoff
 diskcache
+limits
 loguru
 minio
 pydantic[dotenv]
