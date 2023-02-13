@@ -1,4 +1,7 @@
+import io
+
 import pydantic
+from loguru import logger
 
 from minio import Minio, S3Error  # type: ignore
 
@@ -54,9 +57,19 @@ class MinIOClient:
         object_name: str,
         data: bytes,
     ) -> None:
+        logger.info(
+            f"storing data at bucket_name=<{bucket_name}>, object_name=<{object_name}>, byte_count=<{len(data)}>"
+        )
         _ = self._minio.put_object(
             bucket_name=bucket_name,
             object_name=object_name,
-            data=data,
+            data=io.BytesIO(data),
             length=len(data),
+        )
+
+    def store_summoner_data(self, summoner_name: str, data: bytes) -> None:
+        self.store_object(
+            bucket_name="summoners",
+            object_name=summoner_name,
+            data=data,
         )
