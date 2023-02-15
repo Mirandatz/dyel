@@ -1,6 +1,6 @@
 # syntax = docker/dockerfile:1.2
 
-FROM python:3.10.9-bullseye
+FROM python:3.11.2-bullseye
 
 ENV TZ=America/Sao_Paulo
 ENV DEBIAN_FRONTEND=noninteractive

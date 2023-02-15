@@ -1,8 +1,8 @@
 services:
-  database:
+  minio:
     image: quay.io/minio/minio
     networks:
-      - dyel-net
+      - minio-net
     ports:
       - "9000:9000"
       - "9090:9090"
@@ -18,4 +18,4 @@ secrets:
 
 networks:
   # The presence of these objects is sufficient to define them
-  dyel-net: {}
+  minio-net: {}

@@ -38,7 +38,7 @@ def collect_summoner_names(
 
 @app.command(name="download-summoner-data")
 def download_summoner_data(
-    summoner_names: typing.Optional[list[str]] = typer.Option(
+    summoner_name: typing.Optional[list[str]] = typer.Option(
         None, envvar="DYEL_SUMMONER_NAME"
     ),
     summoner_names_file: typing.Optional[pathlib.Path]
@@ -46,12 +46,12 @@ def download_summoner_data(
 ) -> None:
     logger.info("downloading summoners data, names count=<{len(summoner_names)}>")
 
-    summoner_names = collect_summoner_names(summoner_names, summoner_names_file)
+    summoner_name = collect_summoner_names(summoner_name, summoner_names_file)
 
     riot_client = RiotClient()
     storage_client = MinIOClient()
 
-    for summoner_name in summoner_names:
+    for summoner_name in summoner_name:
         data = riot_client.download_summoner_data(summoner_name)
         storage_client.store_summoner_data(summoner_name, data)
 

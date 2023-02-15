@@ -8,7 +8,7 @@ from minio import Minio, S3Error  # type: ignore
 
 class MinIOSettings(pydantic.BaseSettings):
     endpoint: str = pydantic.Field(
-        default="dyel-minio:9000",
+        default="minio:9000",
         env="MINIO_ENDPOINT",
     )
     bucket_name: str = pydantic.Field(
@@ -29,7 +29,7 @@ class MinIOSettings(pydantic.BaseSettings):
 
 class MinIOClient:
     def __init__(self, settings: MinIOSettings = MinIOSettings()) -> None:
-        settings = settings or MinIOSettings()
+        self.settings = settings or MinIOSettings()
         self._minio = Minio(
             endpoint=settings.endpoint,
             access_key=settings.user,
@@ -37,10 +37,10 @@ class MinIOClient:
             secure=settings.secure,
         )
 
-    def is_object_stored(self, bucket_name: str, object_name: str) -> bool:
+    def is_object_stored(self, object_name: str) -> bool:
         try:
             self._minio.stat_object(
-                bucket_name=bucket_name,
+                bucket_name=self.settings.bucket_name,
                 object_name=object_name,
             )
             return True
@@ -51,17 +51,12 @@ class MinIOClient:
             else:
                 raise
 
-    def store_object(
-        self,
-        bucket_name: str,
-        object_name: str,
-        data: bytes,
-    ) -> None:
+    def store_object(self, object_name: str, data: bytes) -> None:
         logger.info(
-            f"storing data at bucket_name=<{bucket_name}>, object_name=<{object_name}>, byte_count=<{len(data)}>"
+            f"storing data at bucket_name=<{self.settings.bucket_name}>, object_name=<{object_name}>, byte_count=<{len(data)}>"
         )
         _ = self._minio.put_object(
-            bucket_name=bucket_name,
+            bucket_name=self.settings.bucket_name,
             object_name=object_name,
             data=io.BytesIO(data),
             length=len(data),
@@ -69,7 +64,15 @@ class MinIOClient:
 
     def store_summoner_data(self, summoner_name: str, data: bytes) -> None:
         self.store_object(
-            bucket_name="summoners",
-            object_name=summoner_name,
+            object_name=f"summoners/{summoner_name}",
             data=data,
         )
+
+
+def main() -> None:
+    client = MinIOClient()
+    client.store_summoner_data("test_bin", "test_bin".encode("utf8"))
+
+
+if __name__ == "__main__":
+    main()
