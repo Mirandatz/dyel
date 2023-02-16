@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   minio:
     image: quay.io/minio/minio
@@ -8,13 +10,13 @@ services:
       - "9090:9090"
     command: [ "server", "/data", "--console-address", ":9090" ]
     environment:
-      MINIO_CONFIG_ENV_FILE: /run/secrets/secrets.env
+      MINIO_CONFIG_ENV_FILE: /run/secrets/dyel_riot_and_minio_secrets
     secrets:
-      - minio_config
+      - dyel_riot_and_minio_secrets
 
 secrets:
-  minio_config:
-    file: ./secrets/minio_config.env
+  dyel_riot_and_minio_secrets:
+    file: ./secrets/secrets.env
 
 networks:
   # The presence of these objects is sufficient to define them
