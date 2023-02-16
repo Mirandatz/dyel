@@ -28,8 +28,10 @@ def collect_summoner_names(
 
     if summoner_names_file is not None:
         names_from_file = summoner_names_file.read_text().splitlines()
-        if len(names_from_file):
-            logger.warning("summoner_file_names is empty, path=<{summoner_names_file}>")
+        if len(names_from_file) == 0:
+            logger.warning(
+                f"summoner_file_names is empty, path=<{summoner_names_file}>"
+            )
         else:
             names += names_from_file
 

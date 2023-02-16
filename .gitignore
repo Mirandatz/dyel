@@ -6,6 +6,7 @@ playground/
 __pycache__/
 minio/
 .vscode/
+container_storage/
 
 # local environment secrets
 secrets/

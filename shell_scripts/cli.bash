@@ -6,6 +6,7 @@ set -o pipefail
 
 network_name="dyel_minio-net"
 runtime_tag="mirandatz/dyel:runtime"
+shared_storage=$"$(pwd)/container_storage/dyel"
 
 if [ ! -f ".dyel_project_root" ]; then
     echo "script must be run from project root"
@@ -17,6 +18,7 @@ docker build \
     -t "${runtime_tag}" .
 
 docker run \
+    --mount "type=bind,source=${shared_storage},target=/data" \
     --rm \
     --network "$network_name" \
     --env-file secrets/secrets.env \
